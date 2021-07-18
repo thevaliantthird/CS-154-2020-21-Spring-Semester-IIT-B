@@ -1,0 +1,31 @@
+1) It was difficult to comprehend the Tree Hierarchy of FLTK's Buttons at first,
+but once it became clear, the purpose of inheritance by using myButton: Fl_Button
+(around line 26). At first I thought that the same type of relationship may apply to
+the Class Controller(around line 39) and the Class myButton, but it wasn't so as the two
+are unrelated. A Controller can't be taken to be the superclass of buttons as there is no
+aspect of a controller shared by each and everyone of the buttons.
+
+2) I was confused at first on how to implement the GUI, I tried to so using abstractions
+similar to those used in SimpleCPP(the Graphics library used in CS101) like XEvents etc.
+but later realized that the virtual function handle()[implemented around line 202] provided in the Fl_Button
+Class is really powerful and can be used to run the entire GUI smoothly. Perhaps FLTK is implemented such that
+whenever we click somewhere it passes information pertaining to the click through this virtual function
+which can be implemented and exploited by the programmer to do whatever he/she wants. The handle()
+implementation runs the program in a way.
+
+3) The order of use of functions became clear rightaway which further helped me in developing. It was clear that
+the function to check the outcomes of a click should be taken to be in a class lower in hierarchy(done in
+the handle() function around line 202) and sent to the move function of the Controller Class(Line 148), which
+deals with it and makes the appropriate changes by interacting with other member functions of the class
+to check feasibility.
+
+4) The FLTK Libraries provide us with enough components that we could turn our blind eye to the internal working
+of the Program and still be able to use all the functionalities, I realized this while going through the
+documentation on the Mouse Events which had all types of functions like FL_MOVE and FL_RELEASE, using All
+of which we could make our programs better and more interactive. (I used these around Line 202 in the
+implementation of the abstract function handle() ).
+
+5) Encapsulating all of the features pertaining to the game inside of one Super-Class Controller(around line 39),
+was another wise decision. Doing so enabled me to prevent redundancy on many fronts by enabling privatization
+of all the crucial variables while at the same time, being able to manipulate them. It also enhanced the
+readability as now the main() function (Around line 288), was reduced to only 2-3 lines.

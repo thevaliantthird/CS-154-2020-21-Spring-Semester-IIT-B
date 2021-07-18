@@ -1,0 +1,13 @@
+Study the uploaded programs and comment on why you are getting the behavior
+
+Part 1 uploaded (same as what we did in class) -- prog1 to prog6
+Part 2  four more programs: prog7 to prog10
+Part 3: 2 programs of your own my1.cpp my2.cpp with inheritance and dynamic binding situations
+ 
+All reference programs are uploaded.
+
+what to submit
+ 1) one single observations.txt
+    explain output of prog1.. prog10 (6 already uploaded)
+    explain output of my1.cpp my2.cpp (your own)
+  2) my1.cpp and my2.cpp

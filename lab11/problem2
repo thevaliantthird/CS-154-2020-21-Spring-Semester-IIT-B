@@ -1,0 +1,25 @@
+Write recursive functions:
+
+1) function cross (l1,l2): produces cross product of 2 lists
+
+2) function reverse(l): to reverse list given in input
+
+3) function sub(l1,l2): to find if l1 is a sublist inside l2
+
+4) function perm(l1): produces all permutations of elements in list 1
+
+
+In each case, the output is a list
+don't print anything inside the function
+
+you can make a call to an example value and then print the result.
+
+
+
+
+
+what to sumit:
+    cross.py
+    reverse.py
+    sub.py
+    perms.py

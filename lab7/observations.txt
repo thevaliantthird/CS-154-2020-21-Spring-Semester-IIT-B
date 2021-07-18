@@ -1,0 +1,58 @@
+I chose to improve my Code for VendingMachine from Lab 3. I did so, by introducing a
+rigorous Error-Checking and Expection Handling Protocol, besides introducing other
+abstract classes and specializing them to different errors.
+
+There was a fatal flaw in the structure of the Program which was that the moment,
+I begin giving inappropriate data, (i.e. Maybe a negative number of drinks etc.).
+That would lead to a cascade of Segmentation Faults.
+
+To start, I added the Stock Feature in drink to keep track of the Stock of Drinks
+left in the machine (could be seen in the struct Drink around Line 15) and also changed drink
+from class to struct as it needed to have its attributes public and hence, it was more appropriate
+for it to be a struct and not a class.
+
+
+
+These were fixed by better structuring the I/O interface using try/catch :
+
+I developed an Abstact class Error(line 52), Implemented as DrinkError(Line 62) and
+InputError(Line 76), to keep track of the various types of errors encountered along the
+way, while the program runs.
+
+I did so, by a construct which could be abstracted as the following pseudocode:
+Used around lines : 149, 169, 257, 280, 351, 399
+
+while (true) :
+  try:
+    Take Input
+    Check Condition:
+      If satisfied , break the loop
+      else Throw Exception of appropriate type
+  catch Error
+
+
+I thought about abstracting this construct as a separate function, but later
+realized that would be ill-suited to C++ as it would mean using a lot of
+confusing lambda functions (it would've been more suited had we used a
+functional programming Language like Haskell or Prolog!). And just went ahead with this Construct.
+
+
+I also removed certain nested conditionals to further relax the programmer reading it,
+This was done mainly in the function VendingMachine::selectdrink (Line 304), where I
+was able to replace the spaghetti like code (expressed as psedocode here):
+
+if(sufficient balance){
+  if(Stock Available){
+    .
+    .
+    .
+    if( accountBalance ==0)
+  }
+}
+
+by a much simpler version, consisting only of two separate conditionals which throw
+errors corresponding to those cases of Insufficient Balance/Stock, which was handled
+by the try-catch construct around the line 364, where this function was called.
+
+Similary Structual Improvements were also made to the EjectChange() function
+around line 275.

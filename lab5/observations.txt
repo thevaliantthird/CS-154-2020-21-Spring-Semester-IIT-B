@@ -1,0 +1,337 @@
+1) From prog1.cpp, We learn that we can't instantiate abstract classes (which
+is why we get error from Line 16), which have some of their member functions non-defined
+ and marked 'virtual'. Progressing to prog2.cpp, we also see that its not the keyword
+ 'virtual' which causes this.The Abstract Behaviour of the function comes from the part '=0'
+ where we choose not to define it.
+'virtual' is used to denote dynamic binding, its the fact that we haven't defined
+certain classes but only specified them to be virtual which casues the error, as
+if we have at least one definition of all the member functions marked virtual in
+a particular class or any of its parent classes, then it is fine, only when that's
+not the case and some function isn't defined anywhere, will we get an error.
+That's why we were able to instantiate B(around Line 16) and still get no error.
+
+2) There was another logical error(which lead to Segmentation Fault) in prog2.cpp
+at Line 22, where we had used the arrow(->) operator with the pointer ap,
+which hadn't been allocated memory till now.
+
+3) In prog3.cpp, we see by the virtue of Inheritance that the two instances of B,
+the first being the pointer 'ap' of type A* (declared about line 14 and dynamically-
+allocated memory around line 23) as well as b(declared around line 16) have identical
+behaviour as the pointer 'ap' points to an object which 'is a' object of class B
+which is inherited from A (Note that this happens only because there are no new member functions in
+B, which weren't declared in A). Also, the pointer 'bp'(declared about line 1 and
+dynamically-allocated memory around  line 24) would behave identically to 'ap', as
+although they have different types. They both point to an object of class B, and
+also B has no functions which isn't pre-declared virtually(and dynamically-bound)
+in class A.
+
+Hence, We see that we easily get the output:
+
+B::f
+B::g
+B::f
+B::g
+(As all instances either are of class B, or a pointer of its superclass pointing
+to an object of Class B.)
+
+3) Note in prog3.cpp that if we add another member function(non-abstract) in the
+class B, then ('*bp','b') won't behave identically as 'ap' as this new function
+would be accessible by the former, but not by the latter.
+
+4) In prog4.cpp, We've defined the 'virtual' function f()(LINE 5) in class A, and
+thereby we have made the class non-abstract, but still inheritable, as the 'virtual'
+keyword will enable dynamic binding which is central to inheritance.
+This is what allows us to instantiate an object of class A(first at line 16 and then 19)
+without any compunction.
+We get the output corresponding from the functions in class A, when it is either of
+that type or a pointerk, pointing to an object of class A(line 21-24) and from
+class B, when its an instance of that class (line 25-26)
+
+5) Besides the subtleties of prog4.cpp, prog5.cpp shows how inheritance
+allows for compatibility in assignment of pointers of different
+classes, when there is an 'is a' relationship between the RHS and LHS, i.e.
+Type(RHS) is a Type(LHS), as seen around Line 30. As 'A is a B',
+we could assign pointers pointing to an object of B class to a variable
+of type A*. As A is the superclass of B, we can do type = subtype
+(But vice-versa isn't permitted!)
+At the same time, we  don't have the same effect with statically allocated variables
+(i.e. 'a' and 'b'), this can be seen in Line 32 and the output it leads to
+from Line 35 and 36.
+Even though we've assigned a, the value of b, that has no effect!
+As this memory is allocated before the running of the program and
+not during runtime.
+What happens in this case, is that a is actually assigned to the copy of class A
+which is stored in the derived class B. (and that doesn't cause any change as
+we no longer have any variables involved, but we will look at what
+change it causes in prog10.cpp)
+Although that doesn't give an error, but still we see that the output corresponding
+to class A is only seen, even after Line 32 .i.e :
+..
+A::f
+A::g
+..
+
+6) In prog6.cpp, We see how we could inherit the same class into multiple classes
+and where the functions of the parent class still remain accessible to all its
+children, but the member functions defined for a class's siblings aren't visible
+to itself.
+[which explains why we can't do 'ap->k()' (Portions commented out around Line
+29 and 39)]
+
+We also again see how pointers associated with dynamically-allocated memory can be
+assigned by the (class) = (subclass) paradigm around line 32 and 37.
+
+We also see how, we just need just one declaration of an abstract, dynamically
+-bound('virutal') function, which is given in class A and using in class C
+when we do cp->g()(Around line 31 and again in spirit around Line 38, but with
+ap as by then we've assigned ap=cp),
+and this yeilds the output:
+A::g
+
+As class A has the nearest definition from our class C to the function g() in
+our hierarchy.
+
+7) In prog7.cpp, We further see what we've already seen in the past programs.
+Besides, seeing how functions calling on other functions inside the same
+class would also follow the principles of Inheritance and take up the nearest
+implementation/definition they could find(Which in this case was just the
+definition in that function itself!) (This is seen around Line 5, where f()
+in class A, calls the g() in class A and Line 16, where k() in class C calls
+f() in class C)
+In addition to that we've started utilizing the full capabilities of pointers
+ and dynamic memory allocation in C++, even using 'delete'.
+
+(Line 24-25)
+We first get an output of
+
+A::f    // Calling f() from ap of type A*
+A::g    // The f() in class A, calling g() inside the same class
+A::g    // Calling g() from ap of type A*
+
+
+(Line 26-28)
+then we delete the pointer ap, i.e. deallocate the memory to it(which corresponded
+to an object of class A)
+and use cp of type C* to get:
+
+C::f      // Calling f() from cp of type C*
+A::g      // Calling g() from cp of type C*, but the nearest implementation is
+          found in the parent class A only
+C::k      // Calling k() from cp of type C*
+C::f      // The k() calling the f() from the Class C
+
+
+(Line 29-30)
+Then we assign the pointer ap(Type A*) to cp(Type C*) and see another example of
+(Type) = (Sub-type) assignment. And then call using that , as seen before as well :
+
+C::f    //Gets called from class C as its an the pointer points to that type only
+A::g    // Gets called from class A as that's the nearest implementation
+
+Then we commit a mistake by assigning ap to bp(of type B*) without allocating
+memory to bp(of type b*) before hand. This gives us a Segmentation Fault
+when we try ap->f(); ap->g();  around Line 32
+
+8) In prog8.cpp, We find Inheritance in a two-level hierarchy, first class B
+inherits from class A (Around Line 8) and Class C inherits from Class B
+(Around Line 13), We see this in practice when we get the output :
+
+C::f        //f() called from Class C
+B::g        // g() called from C giving Class B's implementation as its the nearest
+
+As, the only memory we ever allocated was to an object of Class C (Line 23),
+This memory was pointed to by cp(of type C* as in Line 23), then
+as B is a superclass to C, we used bp(of type B*) = cp (Around Line 24)
+(Another examples of Class = Subclass Assignment) and then ap(of type A*) = bp
+(Around Line 25). As the only object in memory is of type C, we got the output
+corresponding to it
+
+9) The key point covered in prog9.cpp is the extension of Inheritance to Constructors
+which demonstrates to us how every instance of a derived class carries with itself
+an instance of the its base/parent class, which it could construct using the Constructor
+of its base class by passing some different arguments to it.This is reflected in the
+way we get different values printed.
+
+(Line 30-31)
+10C::f      //As for C, the value of z i.e. initiated to 10 is printed
+20B::g      // The nearest implementation of g() is found in parent class B
+              where corresponding to this object of class C, the variable
+              y which is initialized to v+10 = 10 + 10 = 20 is printed (Line 21)
+10C::f      // After that we call k() from Class C, which agains call f()
+            in C (Line 23)
+10C::k       // From the k() in class C (Line 23)
+10C::f        // f() from C, called in the end of k() from C() (Line 23)
+
+
+
+(Line 32-33)
+100B::f
+100B::g
+
+We only get 100 printed as instantiated(Around Line 32), as B has both the
+functions f()a nd g() defined in itself and it doesn't inherit anything.
+Even though it carries with itself a copy of its parent class A with x in
+A instantiated to (Line 14) v+10 = 100+10 = 110, that has no significance
+as we never confront a need to get to its copy of class A for any purpose.
+
+(Line 35-36)
+
+10C::f
+20B::g
+
+We deleted the pointer to an object of Class B, and assigned it to one of its
+sublass C's object. Thus, we can no longer call k() which is defined only in
+Class C. We see that this gives the same output as when we called these functions
+from cp around line 30-31 (As it points to the same thing in memory)
+
+(Line 37-38)
+
+200A::f
+200A::g
+200A::g
+
+We allocated memory to ap(of class A) and called the functions f()a dn g() from
+it, which were implemented there itself hence, we didn't need to have any
+relation with any of its children and just the value x(=100 as initiated in Line 37)
+was printed.
+
+(Line 39-40)
+
+10C::f
+20B::g
+
+We again delete the memory allocated to ap(of type A*) and assign it to cp(of type C*)
+which is actually already assigned to cp(of type C*) in Line 35, and hence, ap
+now also points to the same thing as cp, and we could call only f(), g() from it as
+well, we do so and get the output which we got in Line 35-36 and the calling of
+f() and g() around line 30-31.
+
+10) We first get:
+
+(Lines 22-23)
+
+100A::f     //f() called from class A
+100A::g     // f() from A calls g() from class A
+100A::g     // We call g() from the variable a  in main
+200B::f     //f() from class B
+200B::g     // g() from Class B
+
+First we call a.f()(From Line 22), where a is statically allocated variable of
+class A, this is the parent class with no parents, hence we just get the output
+corresponding to the class A. Similarly, the calls from line 23 give the same from
+class B.
+
+(Line 24-25)
+
+210A::f       // f() called from b's copy of parent class A
+210A::g       // f() calls g() from b's copy of parent class A
+210A::g       //g() called from b's copy of parent class A
+
+When we do a = b in Line 24, what actually happens is that we assign a
+to the copy of the parent class associated with the initiated class B,
+it had x = v+10 = 200+10 = 210, which explains the value of 210 printed.
+
+
+Expainations to my1.cpp and my2.cpp
+------------------------------------
+
+my1.cpp
+-------
+
+In this program, I made use of inheritance Sequentially:
+
+FactoryProduce -> WholeSalePackage -> RetailProduct
+
+1) A key learning for me has been the fact, that not only the classes which have
+virtual undeclared classes are abstract, but also classes which inherit from such
+classes and leave a few of these member functions abstract, even those are abstract.
+
+
+I realized this in my first attempt while I tried to instantiate the class
+WholeSalePackage thinking of it to be a non-abstract class, but as it turns out
+the abstract function PrintRetailProfit()=0 in its parent class FactoryProduce
+renders class WholeSalePackage abstract as well.
+(Commented about around Lines 96-98 and 101-106)
+
+
+2) Thus, we see that when we run this program we actually get:
+
+Profit on Retailer's end is: 30
+Profit on Whole-Sale's end is: 50
+Profit on Factory's end is: 32.6087
+
+This happens as the variables are not dependent on Dynamic-Binding but rather
+on Scope, Thus the value of Profit for Retailer is 30,
+The one for Whole-Saler is set in the line 72, where we explicitly mention
+what we have our Whole-Saler's CP provided the Retailer's CP and WholeSaler's
+margin and similar w.r.t WholeSalePackage and FactoryProduce around line 49.
+
+my2.cpp
+--------
+
+This Program presents a better version of the Supply Chain Representation
+presented in my1.cpp
+
+I tried to find ways to make the classes FactoryProduce and WholeSalePackage
+instantiable while at the same time, not hurting the overall logic of the program
+
+In order to do that, we need to now make the classes FactoryProduce and
+WholeSalePackage non-abstract and provide some implementations for all the
+functions. (Around Lines 36,40,67)
+
+Doing so, I was able to remove all the previous commented section, as now
+I could instantiate all classes. (Lines 101-109)
+
+This gave me the output:
+
+Line (112-130)
+
+Profit on Factory's end is: 20
+The Factory doesn't know about the WholeSale!
+The Factory doesn't know about the Retailer!
+-------------------------
+Profit on Whole-Sale's end is: 30
+Profit on Factory's end is: 18.1818
+The WholeSaler doesn't know about the Retailer!
+-------------------------
+Profit on Retailer's end is: 30
+Profit on Whole-Sale's end is: 50
+Profit on Factory's end is: 32.6087
+
+The first line section comes from the Class Factory's implementation, and as the
+parent class FactoryProduce has no co-relation with WholeSaler's and Retailer's profit
+We print it like that!
+In case of WholeSaler, We do the same with Retailer
+In case of Retailer, we have values for everyone as all functions/Profits now have
+their legit values defined and implemented
+
+(Line 133-135)
+
+Profit on Factory's end is: 32.6087
+Profit on Whole-Sale's end is: 50
+Profit on Retailer's end is: 30
+
+We got the same output as the part from Retailer's part from the past section
+as the statically allocated variable was also initialized with same values as
+the dynamic one!
+
+
+(Line 139-143)
+
+Profit on Factory's end is: 32.6087
+Profit on Whole-Sale's end is: 50
+The WholeSaler doesn't know about the Retailer!
+
+We assign Wp(of class WholeSalePackage) = Rp(of class RetailProduct), doing this
+copies the instance of class WholeSalePackage stored in Rp(which inherits from
+WholeSalePackage) into the variable Wp, and thus we get the same output as the
+WholeSaler and Factory Profits of the section from Line 133-135.
+
+Similarly Line 147-152 Gives :
+
+Profit on Factory's end is: 32.6087
+The Factory doesn't know about the WholeSale!
+The Factory doesn't know about the Retailer!
+
+which is the FactoryProduce's copy stored in the derived class RetailProduct for the
+variable Rp.

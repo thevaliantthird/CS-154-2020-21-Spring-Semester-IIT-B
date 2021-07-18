@@ -1,0 +1,70 @@
+For the model_ programs
+========================
+
+1) In developing model_1.cpp, there was an error as both the variable storing cardinality as well as the function which call it had the same name.
+This was solved by changing the name of the variable to int cardinality; . (Around Line 22 in model_1.cpp)
+
+2) While model_1.cpp seems simple enough, things get really complex just when we try to have two stacks in the Procedural Approach.
+The biggest Problem being now you can no longer get the cardinality of the stack(Line 66 in model_2.cpp), just by knowing a pointer
+to the stack's array, You need to be given the pointer to its cardinality's integer, but if we have to do that anyway, why not simply get to
+that pointer and get the value, instead of defining a function to get it. This part in Procedural is hence, extremely redundant and useless.
+
+3) The repeated use of pointers makes our program more prone to Syntax errors as well as runtime errors, I just had faced problem while compiling
+model_2.cpp around Lines 41, 42,58 and 59, I had tried to increment the value stored in memory given by those pointers, but I had forgotten the brackets,
+which caused the pointer to increment instead of the value stored. Hence, the un-escapable use of pointers in Procedural Programming, also makes it
+more prone to bugs!
+
+4) The use of Structures to encapsulate in model_3.cpp enabled us to have fewer pointers for the various functions, making it less prone to errors,
+but the problem of repeatedly passing these structures' pointers(Around Line 21) as arguments to the Functions still persisted(this causes the program
+to slow down a bit, as while passing, the values are copied for another scope!)
+
+5) Also the model_3.cpp and model_4.cpp file had many embedded errors For ex. The Struct Declaration had "Stack"(Line 14, in model_3.cpp),
+but still its use in the main function(Line 72, in model_3.cpp) and elsewhere used it as "stack". Not to mention the declaration of the structure
+didn't end with a semi-colon.
+
+6) A name Clash happens inside the Stack Class,we can't have int card(); and int card; at the same time, Hence, I had to change the variable
+to be int cardinality; (in model_4.cpp Around Lines 21 and 27)
+
+7) The model_4.cpp file, completely eliminated the use of pointers as Classes enabled much efficient encapsulation. I found writing the code way
+easier then any of the model_ programs encountered before this. The removal of the use of Pointers enabled to reduce to almost no errors either
+synctatical or runtime besides making it better for other programmers to comprehend.
+
+For the Telephone Program
+===========================
+
+1) Deciding which new classes and functions to have for complete functionality was a tough task, I initially thought of having a separate User Class
+to deal with the User Interface of the game, but then simply embedding the Class in Telephone itself really helped with interactions. I finally
+added only two classes CallLog(Line 17) and Telephone(Line 36) and had everything within them itself.
+
+2) Thus, I realized we shouldn't declare classes just for their sake, if embedding them in pre-existing classes could do the job
+without a lot of clutter as well, which is exactly what I did.That's why instead of having another class for UI
+I added the Telephone Class's PlaySimulation() Function (Line 48) for the purpose. It eases deadling with variables, and there's a lesser use
+of passing variables to functions.
+
+
+3) Deciding on whether or not to initialize various classes (by defining a Constructor!) or not should be done early, This could affect the scalability
+Eg. I didn't initialize the CallLog Class first, but then I knew that If I don't then, I'll have trouble at the time of Printing Logs for those calls
+which were terminated midway. Eventually I added the Constructor(Line 26)
+
+4) One small change which I made, which I believe will have a large impact on scalability was taking the state variable(which was previously
+declared as global!) as a private class variable for every instance of telephone. This would make the program scalable to having more than
+one telephone.(Line 39)
+
+For the VendingMachine Program
+================================
+
+1) I started this Program learning from all my previous mistakes and hence, was able to implement very smoothly,As learned from before I just made
+one super class VendingMachine and even had the PlaySimulation() function which intereacts with the user inside it, to ease the use of various Variables
+and preventing any passing in any Functions. PlaySimulation() is in the VendingMachine Class at Line 39.
+
+2)(Trivial Observation/Experience) I observed the clutter on the screen while playing and added Boundaries after every UI action, so as to make
+distinctions clear. Hence, added these at Lines 57,70,94 etc.
+
+3) Lack of Planning which variables and classes to encapsuate where, caused me whole lot of trouble, I was confused whether to have the StartAccount()
+(defined at  Line 98) as a separate function or within some other class's Function as its functionality was only used few times. I went on with the
+first option and it caused me a whole lot of trouble and declaring even more functions and variables , that's why later I removed that independent Functions
+and encapsulated it within the VendingMachine Class (declared at Line 29 and defined at Line 98).
+
+4) Having some standardizations always helps in Programming. As a simple example, while I was adding the Drinks in the Constructor(Line 34) of the VendingMachine
+function, I made it such that only they are indexed by the order in which they are entered. This simple standard, saved me a lot of hassle of searching
+IDs when a person decides to buy a drink(in selectdrink() function around Line 152)

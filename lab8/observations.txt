@@ -1,0 +1,168 @@
+str2int.cpp
+------------
+
+1) The Program runs perfectly for normal integers which could easily fit it the bounds of
+an integer, but the moment we add very long strings or empty strings, we get:
+eg. 12324135413513213545341212
+
+  a.out: str2int.cpp:33: int str2int(std::string): Assertion `i>=0 && i<=15' failed.
+  Aborted (core dumped)
+
+i is s.size()-1 and hence is indicative of s.size()
+
+As the Assertion on Line 33 imposes the pre-condition that the string has to be short
+enough to fit within an int(This is being reiterated upon around line 60 as a post condition,
+as we can't be absolutely certain about it fitting seeing just the length of the string)
+
+If I add any string with characters other than numbers, I'll get: error like:
+
+  a.out: str2int.cpp:34: int str2int(std::string): Assertion `(s[a]<='9') && (s[a]>='0')' failed.
+
+As the assertion on Line 37 imposing the precondition for All character being number
+would be violated.
+
+
+If I enter any negative number  eg. -124 , I'll get:
+
+  a.out: str2int.cpp:53: int str2int(std::string): Assertion `k%10==s[i]-'0'' failed.
+
+As, the logic around line 41 in no way, encorporates the possibility of negative numbers
+and thus, when we check if the number actually matches the string, then the assert() around
+line 27 placed inside the loop will fail.
+
+
+substring.cpp
+-------------
+
+The Program works well in the case, when the substring is actually present in the string,
+but If I try to do so something tricky, like giving it a substring greater than length of string,
+I get:
+
+  a.out: substring.cpp:24: int find(std::string, std::string): Assertion `str.size()>sub.size()' failed.
+
+The assertion on line 24 fails as this would violate the pre-condition for any substring to be
+less than or equal to the string in length.
+
+If I try using string as 'shubh' and substring as 'bhu', I get:
+
+  a.out: substring.cpp:44: int find(std::string, std::string): Assertion `str.size()-pos>=sub.size()' failed.
+
+As the substring's starting position in the string must be greater than or equal to the string's length.
+
+This is caused because of the extra and necessary condition in the for-loop on line 31, which
+requires us to have (i+j)<str.size(), but this won't cut it. As if the inner loop terminates
+as i+j becomes >=str.size(), then clearly the substring won't be present, but we don't
+make this compensation by changing the value of 'IsSub' to false, which gives us that
+even though the substring can't even fit in the string, its a part of it.
+
+This produces the error in the post-conditon assertions as now, it would no longer
+be correct.
+
+collection.cpp
+--------------
+(NOTE: In this program, I've fixed the bugs, as not fixing one of them, would've prevented
+demonstration of further bugs, but even so I've kept the bugs commented!)
+
+Clearly, If I would enter a negative size, it would've violated the pre-condition assertion
+on line 28, and gave me:
+
+  a.out: collection.cpp:28: Collection::Collection(int): Assertion `sz>=0' failed.
+
+This happens as the precondition requires us to have non-negative size for the collection.
+
+When I first made the Program, it was full of bugs.
+If I gave it a positive size, it would run perfectly but upon giving zero as size, it would give me:
+
+  a.out: collection.cpp:39: Collection::Collection(int): Assertion `card<cap' failed.
+
+This was caused by the Line 31(now-commented), as it turns out in the case of size = 0,
+I couldn't put a single element in the collection and Hence, I shouldn't have initialized
+the variable card = 0(Line 31), and so I replaced it with card = min(0,sz-1)
+
+
+Going on, If I try to add any element, It gave me:
+
+  a.out: collection.cpp:57: void Collection::push_back(int): Assertion `S[card-1]==elem' failed.
+
+
+This is because, I had mistakenly added card++(Line 50, now commented) before S[card] = elem(Line 51),
+This would cause error, as we will for a first, be storing every element, one position ahead
+of where its supposed to be and this will cause the post-condition assertion on line 57 to fail.
+
+This was fixed by adding card++ after S[card] = elem(Line 51) on Line 52(commenting the previous one out!)
+
+Also, If I ever tried adding more elements them I can, then it would vioate the precondition assertion on
+Line 46 and give:
+
+  a.out: collection.cpp:46: void Collection::push_back(int): Assertion `card<cap' failed.
+
+The assertion on Line 47 would be called if the size is 0 and still I try to add elements into the collection
+it would violate the pre-condition and give me
+
+  a.out: collection.cpp:47: void Collection::push_back(int): Assertion `card>=0' failed.
+
+As the variable card is set to -1 in case of 0 size by virtue of Line 32.
+
+After I've added the elements, When I try to get the top element by using pop_back(), I get:
+
+  a.out: collection.cpp:76: int Collection::pop_back(): Assertion `(card>0) && (card<cap) && S[card]==res' failed.
+
+This happened because aroun Line 71(now-commented), I had decremented the card after removing the element, which
+would fill the 'res' variable(Line 70) with a garbage value, thereby violating the post-condition assertion on Line
+76, This was fixed by putting card--, before res = S[card](Line 70) on Line 69.
+
+
+optional-additional-problem-funnyassert.cpp
+--------------------------------------------
+
+The assertion statement defined in the program given to us gave compilation error upon running and could be fixed as :
+
+  #define codeassert(arg) switch(arg) { case 0: cout<<"The Condition "<<#arg<<"failed around "<<__LINE__<<endl; break; case 1: break;}
+
+All this means is, if the condition evaluates to false, then print :
+    cout<<"The Condition "<<#arg<<"failed around "<<__LINE__<<endl;
+else Do Nothing
+
+This custom assert definition allows us to do a lot more with assertions in our program.
+
+I used these tools to build a program which challenges the user to do some multiplications, asserts if the
+she/he gave the correct answer and then depending on that either print Congratualations or make him
+do the calculation again!
+
+I developed it further into a custom assertion statement around Line 26 as:
+
+#define codeassert(condition) \
+      if (!(condition)) \
+      { \
+          cout<<"In File :"<<__FILE__<<", Line: "<< __LINE__<<", The Condition: "<<#condition<<" has failed!"<<endl; \
+          Continue(); \
+      } \
+
+
+This would simply take in the condition, if it evaluates to false then it would run the function Continue()(Line 61), which is given as:
+
+void Continue() {
+  cout<<"--------------------------------------------------------------------"<<endl;
+  cout<<"You're getting Another Chance as you gave wrong inputs on your end!"<<endl;
+  main();
+  exit(0);
+}
+
+It would call main() again and give the user another chance instead of aborting the program.
+
+The codeassert() macro is called around Line 42(if the user says anything but y or n) and around Line 52,
+if she/he gives the wrong answer.(In both cases, the use of the Continue() function inside the macro allows
+the user to take another chance)
+
+
+telephone.cpp
+--------------
+
+I further took my code for an abstraction of a Telephone from Lab 3 of CS 154 and improved its pre-condition checking in order
+to better organize it using Custom made-assertions.
+
+I did this by defining the custom macro for codeDialassert() same as the previous program around line 54,
+I use it to make sure that the Number dialed is 10-digit long as, its necessary! As well as whether or not, all the digits
+entered are numbers.
+
+This is done around lines 82 and 84.

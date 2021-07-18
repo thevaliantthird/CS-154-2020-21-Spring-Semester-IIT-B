@@ -1,0 +1,27 @@
+1)  In both the programs, we observe that the Procedural Programs are highly
+redundant, As we need to use the -> operator many times and every time we need
+to specifically mention the variable from which we are calling that
+eg.
+  In program1.c
+    Line 24 :   d->probs[i] = ((long double)d->count[i])/((long double)d->N);
+  whereas in program1.cpp its done quite simply with
+    Line 23:   probs[i] = ((long double)count[i])/((long double)N);
+
+    Similarly in program2.c
+      Line 19:   while(fread(&c->text[i],sizeof(char),1,c->f)){i++;}
+    Is replaced with much less jargon in program2.cpp as
+      Line 19:     while(fread(&text[i],sizeof(char),1,myFile)){
+
+2) The redundancy of Procedural Approach also makes it more prone to errors
+I had much more errors in the C Program than in those with C++, as writing more
+would definitely mean an increment in errors as well.
+
+3) The initialization part is much easier in Object Oriented Programming,
+while in Procedural Programming one may forget to initialize variable leading
+to catastrophical results, in Object Oriented Programming we could be certain
+that our variables are initialized whenenver we construct an Object.
+
+4) As the program becomes more complex, The Object Oriented program could be better
+understood by other programmers as they are structured and packaged, the
+Procedural Approach makes it difficult for other programmers to understand the
+code as the functions are scattered and not packaged.

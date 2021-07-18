@@ -1,0 +1,223 @@
+The Family tree (Original: family.pl, Re-engineered: refamily.pl)
+=================================================================
+
+The only bug with this program was that the granddaughter was ill-defined, We can't do so until we know anything
+about the gender, and we don't have any declaration which does that.
+
+Although We could add another declaration to identify grandfathers, which is what I did in the re-engineered part.
+
+By the declaration: grandfather(X,Y):-(grandparent(X,Y),wife(_,Y)) ; (grandparent(X,Z),wife(Z,Y)).
+But then I got the error something like this (grandfather(lava,X).) :
+      1    1  Call: grandfather(lava,_23) ?
+      2    2  Call: grandparent(lava,_23) ?
+      3    3  Call: grandchild(_23,lava) ?
+      4    4  Call: child(_23,_140) ?
+      4    4  Exit: child(sally,tom) ?
+      .........
+
+      which happened because I had switched the two terms in grandparent(X,Y),wife(_,Y)) ; (grandparent(X,Z),wife(Z,Y)).
+      the grandparent declaration which caused it to go into a long and futile recursion!
+      So, I fixed it by adding (grandparent(Y,X),wife(_,Y)) ; (grandparent(Z,X),wife(Z,Y)). and everything worked out!
+
+(grandparent(Y,X),wife(_,Y)) ; (grandparent(Z,X),wife(Z,Y)).
+
+
+List Reversal (Original Program: origreverse.pl, revised: reverse.pl)
+====================================================================
+
+This program works only because reverse() is a pre-defined rule in Prolog.
+Thus, when we write:
+
+rev([X],[X]).
+rev([A|L],X):-rev(L,Y), append(Y,[A],X).
+
+
+This will solve our problem!
+
+
+
+Find the kth element (Original: realfindk.pl, Re-engineered: findk.pl)
+=======================================================================
+
+The original program went well even without any changes.
+Then I changed it by adding a single statement: findk([A|B],K,X):-S is K-1,findk(B,S,X).
+But it didn't go well and on tracing I got:
+
+1    1  Call: findk([1,2,3,4,5,6,7,8],5,_39) ?
+2    2  Call: _112 is 5-1 ?
+2    2  Exit: 4 is 5-1 ?
+3    2  Call: findk([2,3,4,5,6,7,8],4,_39) ?
+........
+
+15    8  Fail: findk([8],-2,_39) ?
+13    7  Fail: findk([7,8],-1,_39) ?
+11    6  Fail: findk([6,7,8],0,_39) ?
+
+which clearly indicated at something close to an infinite recursion which occured only because of the lack of a
+terminating fact, and so I added : findk([X|Y],1,X). and the problem was solved.
+
+
+Path Connections (Original: path.pl , Re-engineered: repath.pl)
+================================================================
+
+The Path-connections Program given in slides went perfectly well, for paths of all depths: eg.
+(This is the most deep we could get and it works)
+| ?- path(delhi,X).
+X = mumbai ? ;
+X = bangalore ? ;
+X = chennai ? ;
+X = kolkata ? ;
+X = patna ? ;
+
+Now, If I try to get it to work with just a single construct, (say connected) like:
+
+connected(B,A):-connected(A,B),!.
+connected(A,C):-connected(A,B),connected(B,C).
+
+and now I see that I'm unable to go beyond the single-edge connection, as we got:
+
+| ?- connected(delhi,X).
+X = mumbai ? ;
+X = mumbai
+yes
+| ?- connected(patna,X).
+X = kolkata
+yes
+| ?- connected(patna,delhi).
+Fatal Error: local stack overflow (size: 16384 Kb, reached: 16384 Kb, environment variable used: LOCALSZ)
+
+This happens because when I do connected(patna, delhi), because the symmetricity statement leads to infinite recursion (as I found
+on tracing):
+
+1    1  Call: connected(patna,delhi) ?
+2    2  Call: connected(delhi,patna) ?
+3    3  Call: connected(patna,delhi) ?
+4    4  Call: connected(delhi,patna) ?
+5    5  Call: connected(patna,delhi) ?
+6    6  Call: connected(delhi,patna) ?
+7    7  Call: connected(patna,delhi) ?
+
+So, lets try to remove the symmetricity declaration.
+On doing so, the program runs into a different form of infinite recursion given by:
+
+1    1  Call: connected(patna,delhi) ?
+     2    2  Call: connected(patna,_86) ?
+     3    3  Call: connected(patna,_110) ?
+     4    4  Call: connected(patna,_134) ?
+     5    5  Call: connected(patna,_158) ?
+     6    6  Call: connected(patna,_182) ?
+     7    7  Call: connected(patna,_206) ?
+     8    8  Call: connected(patna,_230) ?
+     9    9  Call: connected(patna,_254) ?
+    10   10  Call: connected(patna,_278) ?
+    11   11  Call: connected(patna,_302) ?
+
+i.e. The Program is trying to find every such case, where there is any connected(), but it won't find any.
+
+I tried replacing it with connected(A,C):-(connected(A,B);connected(B,A)),(connected(B,C);connected(C,B)).
+to take the symmetricity into account, but I got the same result. (Because still it won't go beyond the first statement,
+as Recursion is a depth-first operation.)
+
+Then I tried to place the symmetricity into place by adding facts corresponding to that symmetricity.
+Still there was no improvement as it just got looped after one depth:
+1    1  Call: connected(patna,delhi) ?
+    2    2  Call: connected(patna,_86) ?
+    2    2  Exit: connected(patna,kolkata) ?
+    3    2  Call: connected(kolkata,delhi) ?
+    4    3  Call: connected(kolkata,_135) ?
+    4    3  Exit: connected(kolkata,patna) ?
+    5    3  Call: connected(patna,delhi) ?
+
+This happened because even though I took symmetricity in account for the facts, I didn't do so for rest of the declarations.
+i.e. Although all the facts would now exist with symmetry, but still we'll find that the internal calculations of the
+connected() rule would still not be symmetric, and even using the cut operator, we can't eliminate the infinite recursion
+which would come into play if we define that as a rule.
+
+Thus, We find the generic solution of declaring a separate rule for single-depth paths.(As done in the Original!)
+
+
+
+Graph Connections (original : graph.pl , Re-engineered: regraph.pl)
+======================================================================
+
+The Program has one infinite recursion, caused whenever you try to query for a connection, which isn't there in the list.
+
+ Eg. :
+
+ | ?- connected(mumbai, patna).
+      1    1  Call: connected(mumbai,patna) ?
+      2    2  Call: connected(patna,mumbai) ?
+      3    3  Call: connected(mumbai,patna) ?
+      4    4  Call: connected(patna,mumbai) ?
+      5    5  Call: connected(mumbai,patna) ?
+      6    6  Call: connected(patna,mumbai) ?
+      7    7  Call: connected(mumbai,patna) ?
+      8    8  Call: connected(patna,mumbai) ?
+      9    9  Call: connected(mumbai,patna) ?
+     10   10  Call: connected(patna,mumbai) ?
+
+This is same as what we saw in the above program, and even on adding cut operator, it isn't fixed.
+
+Even if we add a cut operator it won't solve the problem in Prolog 1.4.5 (as in this latest, version of Prolog, the utility of
+the cut operator has been drastically reduced!). Although the program  runs perfectly on adding the cut operator and running in
+Prolog 1.0.1 (found that online!)
+
+
+Reward (Original: reward.pl , Re-engineered: rereward.pl)
+==========================================================
+
+The Original Program had added a bang(!) after the gatesreward() part, due to this when we run the rule, we get:
+
+| ?- gatesreward(X).
+     1    1  Call: gatesreward(_23) ?
+     2    2  Call: btech(_23) ?
+     2    2  Exit: btech(tikku) ?
+     3    2  Call: sportsperson(tikku) ?
+     4    3  Call: chessplayer(tikku) ?
+     4    3  Fail: chessplayer(tikku) ?
+     4    3  Call: footballplayer(tikku) ?
+     4    3  Fail: footballplayer(tikku) ?
+     4    3  Call: athelete(tikku) ?
+     4    3  Fail: athelete(tikku) ?
+     3    2  Fail: sportsperson(tikku) ?
+     2    2  Redo: btech(tikku) ?
+     2    2  Exit: btech(ronu) ?
+     3    2  Call: sportsperson(ronu) ?
+     4    3  Call: chessplayer(ronu) ?
+     4    3  Fail: chessplayer(ronu) ?
+     4    3  Call: footballplayer(ronu) ?
+     4    3  Exit: footballplayer(ronu) ?
+     3    2  Exit: sportsperson(ronu) ?
+     1    1  Exit: gatesreward(ronu) ?
+
+X = ronu ?
+
+We don't get pinki, even after pressing ';'.
+This is because the further backtracking will end due to the cut operator.
+
+We can now remove that cut operator and notice and our work is done!
+(In rereward.pl, the above is done and then we get that both ronu and pinki will get the reward.)
+
+Further, We see the utillity of using the cut opertor in front of the various clauses for the sportsperson(X), as:
+When we run gatesreward(pinki)
+We get this on trace:
+| ?- gatesreward(pinki).
+      1    1  Call: gatesreward(pinki) ?
+      2    2  Call: btech(pinki) ?
+      2    2  Exit: btech(pinki) ?
+      3    2  Call: sportsperson(pinki) ?
+      4    3  Call: chessplayer(pinki) ?
+      4    3  Exit: chessplayer(pinki) ?
+      3    2  Exit: sportsperson(pinki) ?
+      1    1  Exit: gatesreward(pinki) ?
+
+(1 ms) yes
+
+As we see, we just see chessplayer and move on, no need to check the other two clauses.
+
+
+
+
+
+Back Tracking and Unification
+Two Sibling Programs

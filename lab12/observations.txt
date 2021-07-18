@@ -1,0 +1,68 @@
+palin.pl
+---------
+
+The conc(A,B,C) construct makes sure that C is the concatenation of A and B.
+This is then used in the main palindrome construct as:
+  palindrome(L):- conc([X|Y],[X],L), palindrome(Y).
+
+  i.e. Any List L is a palindrome only if it could be decomposed into two three lists,
+  the middle one of which is a palindrome itself(Y) , the first and the last lists(X) are the same and
+  list L is formed by pre-concatenating and post-concatenating them to the middle list.
+
+  This compounded with the base cases on lines 8-9 complete the recursion.
+
+reverse.pl
+----------
+
+Clearly the reverse of a single element, is that element itself.
+
+And in other cases, we could say that if a particular lists is the reversal of another, then if we
+divide the former into two, reverse these divisions and then place them on each-other's(no where they originally were!)
+place, then we should get the second list.
+
+  Described on Line 6 as : reverse([A|B],[C|D]):-reverse(C,B),reverse(A,D).
+
+count.pl
+--------
+
+As line 5 proclaims, Any empty list has no element and hence, the construct should return 0 irrespective.
+
+If the head of the list, is the same as the element to be counted, then we should increment our count,
+i.e. the number of occurences in rest of the list, should be one less than what they are for the list with this one
+element included. (Line 6)
+
+Also, if what's described above is not the case, then now, what we'll plainly have is that the count is same as before
+, it doesn't depend on the inclusion/exclusion of the head element. (Line 7)
+
+substring.pl
+-------------
+
+Clearly, the empty list is a sublist of any other list. (Line 10)
+If the heads of both lists match, then clearly the first would be a sublist of the second iff the remaining portions
+of the two lists are sublists(Line 11)
+
+And if it so that the heads don't match or even if they do, then the first list could be a sublist of the second, iff the first list,
+is a sublist of the part of the second list excluding its head (Line 12)
+
+appen.pl (append.pl  , but that's a reserved keyword in prolog)
+--------
+
+Line 5, proclaims the truth that, any empty list appended to any other list, would just be the latter list.
+Line 6 defines that we can take a particular subsegment of our appended list and of our normal list and remove these.
+
+
+factorial.pl
+------------
+
+Line 5: places the base state: 0! = 1
+Line 6: defines the recursion (N)! = N* (N-1)!
+
+min.pl
+------
+
+Clearly, a single element list, has that element itself as the minimum.
+If there are more than one elements, then the minimum is simply the minimum of the list, excluding the maximum of the
+first two of its elements!
+
+Note: We had to make use of the =< operator, and assume two elements of the list in the program, and it couldn't have been
+done without these.

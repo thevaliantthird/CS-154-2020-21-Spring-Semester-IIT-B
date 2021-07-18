@@ -1,0 +1,379 @@
+All the observations I've made, have been seen on : g++ (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0
+
+complex.cpp
+------------
+
+I defined the operators for '+','-','*','/' and separate functions for getting the
+squared modulus value and the argument of the Complex Number.
+
+The first error I encountered was of the form :
+
+complex.cpp:75:8: error: no match for ‘operator-’ (operand type is ‘Complex’)
+   75 |   c0 = -c1-c2-c3+c4;
+
+AND
+complex.cpp:84:12: error: no match for ‘operator-’ (operand type is ‘Complex’)
+   84 |   c0 = c2*(-c3)*c4;
+
+This is because, although I did define the operator for the operator '-', when its in-fixed.
+I didn't do so for pre-fixed unary operator:  '-'. This I did by defining the operator like:
+
+Complex operator -() {
+  cout<<"Negating the Complex Number given by ";
+  prn();
+  return Complex(-i,-j);
+}
+
+Around like 21.
+
+Now, Coming to the results I got, I see that the cascaded expression on line 75:
+c0 = c1+c2+c3+c4 gave the output:
+
+(10+(10)i) + (20+(20)i)
+(30+(30)i) + (5+(6)i)
+(35+(36)i) + (0+(0)i)
+35+(36)i
+
+Clearly Indicating the left-to-right order in which these operators(being on the same level of precedence!) get evaluated.
+
+And this remained true, even When I put the - sign in the cascaded expressions on lines 77,79,81 and 83. In fact, it also clear
+that the place where we place the -negative sign doesn't matter, It would be evaluated from left to right only.
+
+eg. On line 81,   c0 = -c1-c2-c3+c4;, gave :
+(This alongwith the expression on Line 83 also demonstrate '-' as the unary operator defined around line 31)
+Negating the Complex Number given by 10+(10)i
+(-10+(-10)i) - (20+(20)i)
+(-30+(-30)i) - (5+(6)i)
+(-35+(-36)i) + (0+(0)i)
+-35+(-36)i
+
+Thereby affirming the precedence of operators on the same level.
+Further, associativity can be seen in action on Line 83, which is identical to that on Line 81, except for the order, and thus gives:
+
+Negating the Complex Number given by 10+(10)i
+(-10+(-10)i) - (5+(6)i)
+(-15+(-16)i) + (0+(0)i)
+(-15+(-16)i) - (20+(20)i)
+-35+(-36)i
+
+(the identical result as the previous one!)
+
+Moving on to Multiplcation and Divsion Operators, I had  from Lines 90, 92  demonstrated the left-to-right evaluation of expressions of the same
+precedence. This could also be seen more vividly by the Expression on line 96, where by using even the '/' operator which is given the same
+precedence as '*', we got: by the expression: c0 = c1*c2/c3;  :
+
+(10+(10)i) * (20+(20)i)
+(0+(400)i) / (5+(6)i)
+(0+(400)i) * (5+(-6)i)
+39.3443+(32.7869)i
+
+
+
+
+Also, as the '/' operator calls the '*' operator, that accounts for the extra(3rd line) in the above output!
+
+(The results of Line 100: c0 = c2*c1/c3)
+
+(20+(20)i) * (10+(10)i)
+(0+(400)i) / (5+(6)i)
+(0+(400)i) * (5+(-6)i)
+39.3443+(32.7869)i
+
+
+
+Further the common results of Line 96 and 100 i.e. 19+32i confirm the associativity of Division and Multiplication.
+
+
+But the results of Line 94, gave:
+
+(10+(10)i) / (20+(20)i)
+(10+(10)i) * (20+(-20)i)
+(0.5+(0)i) * (5+(6)i)
+2.5+(3)i
+
+Affirming that Division and Multiplication don't associate with each other, i.e. when you have both the operators '*' and '/',
+then the results will differ.
+
+Now, We can observe from the output of:
+
+c0 = c1+c2+c3*c4 :
+(5+(6)i) * (0+(0)i)
+(10+(10)i) + (20+(20)i)
+(30+(30)i) + (0+(0)i)
+30+(30)i
+
+c0 = c1+c2+c4/c3
+
+(0+(0)i) / (5+(6)i)
+(0+(0)i) * (5+(-6)i)
+(10+(10)i) + (20+(20)i)
+(30+(30)i) + (0+(0)i)
+30+(30)i
+
+c0 = (c1+c2+c3)*c4
+
+(10+(10)i) + (20+(20)i)
+(30+(30)i) + (5+(6)i)
+(35+(36)i) * (0+(0)i)
+0+(0)i
+
+
+c0 = c1-c2/c3
+
+(20+(20)i) / (5+(6)i)
+(20+(20)i) * (5+(-6)i)
+(10+(10)i) - (3.60656+(-0.327869)i)
+6.39344+(10.3279)i
+
+
+c0 = (c1-c4)*c3
+
+(10+(10)i) - (0+(0)i)
+(10+(10)i) * (5+(6)i)
+-10+(110)i
+
+, We see that whenever we use * or /, then it gets evaluated first as it has greater precedence then +/-.
+
+Also, This precedence can be overcome by using brackets '()', as they have higher precedence, then even the '*' and '/' operators.
+
+Also, We can see that the expression on Line 125 wanted to perform a division by zero and thus fails the assert() Around Line 56,
+inside the definition of the '/' operator.
+
+
+collection.cpp
+--------------
+
+I first overloaded the << operator around line 33 into a void, function, which merged the argument Collection to itself.
+This could be seen  used around line 84 of main(), it is by virtue of this calling of the '<<' operator that we get, from the code
+on line 85:
+
+1 2 3 4 5 1 2 3
+
+, which proves successful merging.
+
+Then using the user-defined '>>' pop operator, I got the elements in LIFO(Last in first out) order from the collection,
+which is done by the loop around lines 88-90. Giving the output:
+
+3 2 1 5 4 3 2 1
+
+which could be seen as the reverse of the former output, thereby asserting the correctness of the program.
+
+
+evaloader1.cpp
+---------------
+(For the Unchanged Program!)
+
+We observe that in the given program, We add p(which is a global variable) to the value of , we have before it, thus it just adds,
+like a 2x multiplier. Thus, As the first three numbers, we get 2,4 and 8 which is just the powers of 2, as we are multiplying 1
+by 2 at every step.
+
+When we call f(++p), which increments p and passes the incremented value as the argument (this is a general thing!, the arguments if
+containing of operators are first evaluated and then passed)
+Thus, p is incremented to 9(from 8), and f(++p) is actually f(9), thus by the line 8 (p = p+i), p is set to 9+9 = 18
+
+(For the Modified Program) [Note that due to the arbitariness with which compilers evaluate arguments, this may not be the same for all compilers]
+(Called From Line 19)
+The first call to f i.e. f(p,++j) gives us 6. This is because, the value of j passed is 4
+Whereas p is 1 and so is i, therefore, p is changed to 6(1(p)+1(i)+4(j)).
+
+The Second call i.e. f(p,p+j), j is now 4, due to previous increment, and p is 6,
+Thus its effectively f(6,10) [As all arguements are evaluated before being passed!]
+This changes p to 6(p) + 6(i)+10(j) = 22.
+
+The third call i.e. f(p,p+(j++)) evaluates first to f(22,22+4) as (j++) actually is
+ gives 4 then its values is calculated as :
+ p = 22(p)+ 22(i) + (26)(j) = 70
+
+The fourth and most complicated call i.e. f(++p,(++j)+(p++)) is equivalent of
+f(71,77) with p equal to 72 (as the arguments got evaliated from right to left),
+hence the value of p is updated as p = p(72(incremented))+71(i)+77(j) = 220
+
+exceptions.cpp
+---------------
+
+The Given Program exhibits the use of exceptions in all its spirit. We could see the active use of try{} and catch{} inside the loop from Lines 44 to 51.
+These allows us to intercept any error, which may have occurred(specifically, here they would occure due to the fact that we are accessing illegal areas of memory!)
+
+This is done with the help of the user-defined operator [], which throws the error of type OutofBound.
+
+(Modified)
+
+The Line 43, which uses array[i] to print the various positions of said collection, earlier directly accessed the stored array.
+In order to use the better version, i.e. modifying it to use the [] operator on the collection itself was not a easy task.
+
+First I tried, this->[](i)  (Which doesn't work as the brackets have higher precedence then ->, would try to be evaluated first, but that would seem ambiguous)
+Then I tried this->[i], but it would fail for the same reason
+Finally I did (*this)[i] and it worked! (This happened as the first set of brackets got evaluated first(left-to-right) and then the latter part was simply a call
+of the [] operator!)
+
+
+
+lval-rval.cpp
+-------------
+
+When we call x++, it returns the value of x(before increment) it returns this by value(which is actually a const int)
+and thus, no value can be assigned to it. Thus if we do x++ = (anything), it'll give an error,
+as it is initialized as a const int& and hence can't be changed!
+
+The above can also be explained by the fact that whenever we pass by value, it doesn't exactly refer to any where
+in memory in the scope of the place from where the function would be called!
+
+Whereas when we have a call to ++x, it increments the value of x itself as type 'int&',
+which means it does point somewhere in allocated memory and thus we could do ++x = (anything)
+
+In my program, this could be seen as :
+
+  Line 16-17 gives 10, as first we increment 10 to 11, then again re-assign this to the
+  result of x++(which is of higher precedence then ++x! and hence is evaluated before ++x) as 10.
+  Thus it could be replaced as equivalently doing x=10
+
+  In Line 18-19, We simply, increment the value of x, but then set the incremented value back to 20.
+  Thus, we get 20 as answer.
+
+
+right-to-left.cpp
+------------------
+
+(Original Program)
+The '++' operator prefixed or postfixed has right-to-left precedence, and has higher precedence than the
+assignment operator '='. Thus, In the given program, Firstly c is incremented to 4,
+but the value 3 is taken to be the RHS of the expression (a = (++b) = (c++), Line 14).
+Then b is incremented to 3.
+After this the '=' (assignment) operator is called, which does its work also from right-to-left
+and thus, both a and b is assigned to 3.
+(Remark that c has been incremented to 4 already, but the value 3 is the one considered as the value in the expression given!)
+Hence, by Line 15 , a = 3, b = 3 and c = 4, which is printed
+
+When Line 17 runs, We get :
+
+executing 2=3
+executing 1=2
+
+This is a further demonstration of how the assignment operator runs from right to left.
+Which is why, first 2 = 3 is run and then 1= 2
+
+(Modified Program)
+
+It is noteworthy that what I wrote on Line 34 would give an error as again,
+we can't ever allocate x++ = (anything)
+
+Further, something rather trivial happened when I did (Around Line 39) b1=-b2=-b3 = b4 = -b5 = -b6 = -b7 = -b8;
+What I got was :
+
+Negating from 8 to -8
+Negating from 7 to -7
+executing -7=-8
+Negating from 6 to -6
+executing -6=-8
+Negating from 5 to -5
+executing -5=-8
+executing 4=-8
+Negating from 3 to -3
+executing -3=-8
+Negating from 2 to -2
+executing -2=-8
+Negating from 1 to -1
+executing -1=-8
+
+the '-' operator holds a higher precedence then the '=' operator, still what we see is
+although both operators are evaluated from right to left, it so happens that the negation operator is
+evaluated turn-by-turn with an assignment in between. This is so because although C++ assigns the lowest precedence to the assignement
+operator, it still evaluates it first, if and only if it is at the outer level of the parsing tree in the
+expression cascade.
+
+
+trythis1.cpp
+------------
+
+(Original Prorgam)
+
+From the call of line 13 (f(i,i++)) we get 11 10, As even though the argument evaluation is done from left to right,
+the higher precedence of '++' operator, requires it to be evaluated first.
+Thus, we get x = 11 and y = 10
+
+The second call from line 17(f(++i,i++)) gave 13 11 as the postfixed ++ operator holds higher precedence than the prefixed one.
+This means, first i is incremented to 12, but the value y = 11, and then the value of i(i.e. 12) is incremented to
+13 and passed as x (As its given as ++i)
+(The above two points are also like that because functions evaluate their arguements from right to left)
+And as by the end i = 13 (due to three increments), 13 is printed by cout in line 20.
+
+(Modified Program)
+
+This part deonstrates how there's no specific order in which function arguments are evaluated in C++, and it varies from compiler to compiler.
+But for the one I used. It did it by such (The exoression on Line 24 f(i, i++,(++j)+i,(++j)*(++i),++j))
+It gave me the output 12 11 34 242 23
+
+First, the rightmost expression was evaluated and j was incremented to be 21(but as a type int& for now!)
+then the 3rd argument is evaluated it take (++j) as 22 and (++i) as 11 and evaluates the whole thing,
+because, whenever C++ evaluates an argument, it does so as a whole, if its left to be of type int&, then fine
+but if its like int*(int&) or int + (int&) or (int&)*(int&), it typecasts the whole thing to int and just makes it final.
+Thus, third argument finalizes itself as 242.
+Then it moves to the second argument which takes (++j) as 23 and i as 11 and finalizes the value of 34
+Then to 2nd argument which makes the value of y as the current value of i i.e. 11 and further i is incremented to 12,
+which is passed as the argument x.
+
+When I ran the same code in an online compiler, it gave different outputs for each compiler
+Further as I found out from my reading from a few books, there's no fix way to get how its evaluated!
+
+trythis2.cpp
+------------
+(This is another example of a program giving different output in different compilers)
+(original Problem)
+
+(Original Program)
+
+The Expression on line 13: f(i, i++, ++i), would be evaluated as:
+1) the rightmost exp. is evaluated and i is incremented, the value of z which will be passed is thus (as of now) of type int&
+2) The second exp. is evaluated to 11 and incremented to 12
+3) 12 is the value of i as of now and is thus passed
+4) the value of z was (for the time being!) whatever value i took, which is 12, thus 12 is passed as z as well giving us:
+
+12 11 12
+
+The call from line 17 is evaluated as :
+
+1) The rightmost expression is evaluated and i is incremented to be 13 and stored as an int&
+2) Then the second argument is evaluated to  be 13 as that is the current value of i, and further i is incremented to 14
+3) Then the third argument further increments i to 15, and passes it value as x(and also as z, as it was int& pointing to i for the time being)
+
+This gives us 15 13 15, with i = 15 which is printed in line 19.
+
+(Modified)
+
+I did a small change, I declared a variable x(set to 0 in Line 20), and I simply added it to the values of the third arguement being passed
+This has the effect of converting the int& to int and thus, giving the output, evaluated at the point the expression was being evaluated.
+
+Thus, I get the output:
+
+12 11 11
+15 13 13
+15
+
+
+why-it-fails.cpp
+----------------
+
+The Logical OR operator (||) has lower precedence then the '<<' operator(as bit-shift operator). This causes,' b <<' to get evaluated before
+'a||b' and causes error, as it's not even appropriate as there's endl on the otherside.
+
+This was successfully fixed in the modified version by putting (a||b) inside brackets.
+
+Brackets are of higher predence then both the logical OR operator and the bit shift operators. Hence, they get evaluated first.
+
+
+postfixprefix.cpp
+------------------
+
+The original Program merely demonstrated how we could differentiate between the postfix and prefix '++'(increment) operators, they differ
+only because of the type of argument which is nothing in case of pre-fix operator, whereas its (int) in case of post fix.
+
+(I completed the program ) and in it, we could see that the post fix operator, returns a const int& as it is futile for us to provide it with
+manipulatable memory, as the only purpose its supposed to serve is to be a rvalue for an assignment and nothing else.
+
+The Line 31 increments the value of a.v, which is reflected in the call to prn() from the following line.
+As the pre-fix operator returns the object itself in its entirety as A&, we can easily assign it to some other variable of type A (done in Line 32)
+We could then see the use of the pre-fix operator(Line 34), which has the same value of v as 'a' did before the increment, and so is printed in Line 35
+
+But a is now incremented which can be seen from the output of Line 37.
+
+Also, the line 36 won't work as we're trying to assign a const A type to something!

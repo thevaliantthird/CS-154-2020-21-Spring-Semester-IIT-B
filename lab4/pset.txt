@@ -1,0 +1,9 @@
+submit:
+
+15puzzze.cpp
+
+observations.tx
+
+
+
+screenshot of your 15puzzle (unsolved positon)

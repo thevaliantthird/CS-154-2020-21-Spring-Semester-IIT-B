@@ -1,0 +1,53 @@
+Improvement: My Previous Program worked just fine, I've only added proper
+indentation, Spacing and added bit more Abstraction in this improvement!
+
+
+DISCLAIMER: All Line References made are to singlelift.cpp until specifically
+mentioned
+
+
+1) The Single most hectic task in Declaring classes for big projects is The
+public-Private part. If you declare some variables ar Private(because of their
+own properties and confidentiality), you need to declare public functions to get
+their value, I found this problem in declaring all the four classes: Person(Line 40)
+, lift(Line 115), Floor(Line 68) and Controller(Line 284).
+
+2) I required to pre-plan all features before adding them, this includes
+enumerating which functions to add in what classes and which will call which,
+I initially lacked planning which caused me to spend a lot more time in the process
+for the Lift and Floor class, (Around lines 115 and 68 resp.) where I got confused
+how to make sure that a person on a particular floor calls the right lift, later
+I was able to solve it, by making two Global MultiSets requestsUp and requestsDown
+(Around line 26-27), with which I could now manage when and where is the Lift
+supposed to go, by checking where is its closest passenger(implemented in the
+last section of Lift::NextMove (Line 204)).
+
+3) The above point, underlines a very crucial role of Global Variables, using which
+I was able to streamline in process of selection among various lifts in twolifts.cpp
+(Actually Multiple Lifts!), by keeping track of the requestsUp and requestsDown MultiSets
+(Found Around line 26-27)
+
+4) Another thing, which often create problems is the order in which we need to define classes
+, Initially I had added a pointer to the Floors which are the Starting and Ending points
+for the passengers, but later I had to remove it as Floor Class(a class depending a lot more
+on Person class than Person on Floor) was declared after it(Around line 42-43). Hopefully, there are other
+aspects of OOP which we'll soon learn, which'll help us overcome this problem :)
+
+5) The Debugging Process is highly streamlined in OOP, It was for the first time,
+that I encountered only 2-3 bugs in such a large program, and that was because the
+independence of differnt snippets means we only need to change the code once. Most of
+which revolved around declaring Constructor Functions around lines 48,78 and 125.
+
+6) Having an Ascending structure i.e. Every subsequent Class is a super-set of the
+former eases things. This is what I had to realize, and I set things straight in the manner:
+Persons are on Floors, and when we know of Persons and Floors, we can now deal with Everything
+related to lifts. Hence, Finally I made my order of declaring the classes:
+Person(Line 40)->Floor(Line 68)-> Lift(Line 115)-> Controller(284) and then main which creates
+an instance of Controller, which is used to run the Simulation.
+
+7) Adding the Controller Class(Around line 284) was another improvement which I added by Clubbing many related 
+functions into that abstraction. I think its easy to make functions outside of Classes and deal
+with stuff using them as it takes less time and thinking, but getting them inside a class makes
+the program uncluttered and centralized, which could be way easier for others to read, understand 
+and contribute to.
+

@@ -1,0 +1,21 @@
+we explore ideas in LP through prolog
+
+
+
+install gprolog
+
+
+
+apt-get install gprolog
+
+
+
+or download it from gnu website
+
+
+
+visit this place for files as I develop them online and drop them here, esp. if you are joining late.. take the files from here since video will come up only after the full session.. 
+
+join as soon as you see this email
+
+

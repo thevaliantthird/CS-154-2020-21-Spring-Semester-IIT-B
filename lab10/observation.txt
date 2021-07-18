@@ -1,0 +1,14 @@
+main.py
+-------
+
+In My first encounter with functional programming, I tried to have as many functions
+and as less variable as possible, and managed to reduce it to a single variable
+which was word_count {} [Inside the reader() function around line 8].
+
+The Main cascade of functional calls is seen at line 22.
+
+modified.py
+------------
+
+I modified the first program to be even more functional but with terrible readability when sir said that the goal was to have as
+less lines as possible. This wasn't very efficient though.

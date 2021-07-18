@@ -1,0 +1,105 @@
+Problem 1
+----------
+
+1a) We could see that this very naive recursive algorithms works well till small numbers and fails the moment m>3 and/or n>5,
+This naive version makes use of a very basic recursion structure.
+
+With the base case being: m = 0,
+and a first-order recursive call: (Line 10) and a second order recursive call on Line 12.
+
+P.S. I also implemented the whole thing using lambda functions given towards the end (line 37)
+
+As we see in 1b, this implementation is pretty redundant and inefficient.
+
+1b) It could be proved that there is no way to do this question without the use of either Global variables or Parameterization, as we need a way
+to do the increment at the end of every function call, which would call for a common variable accessible by all the calls, and that could be done
+only with either of the two ways used.
+
+I first implemented the Lambda Function by passing i as a parameter and treating it as output (Line 27 onwards, commented!)
+
+I then implemented the functionality as a normal function using the global variable i, which maintains count for the number of function calls.
+
+And I got 42438 function calls for m = 3 and n = 5, which is too much!
+
+1c) Now seeing that how many times, individual tuples are (m,n) are used as arguements to the function. We see that the number is as high as
+10 for some tuples. eg. When I ran the program for (3,5), The function was called for as many as 240 times for (1,1) and surely it would've made
+many other calls in order to reach there.
+
+This was done again using the Global variable count (Hashmap, which is pre-implemented in Python as Dictionary!)
+(This runs O(n) in worst case and O(1) in average-case giving us pretty good efficiency)
+
+This exposes the redundancy and wild-inefficiency of this naive method, due to which we move on the memoization in order to reduce the total number of
+function calls.
+
+1d) Again making use of the Global Variable Mem for Memoization(as it may as well be proved again that they are just two equally inefficient ways to do so,
+the other being passing it as a parameter!), and using the variables i, j for counting the function calls and table lookups, We see that upon running on (3,8)
+, it took as few as 5119 function calls and 1029 table lookups to calculate the function for (3,8), recall that it took the naive method 42438 function calls
+to calculate it just for (3,5)[Which is done in just 636 function calls and 130 table lookups in our case!]. Hence, We've made phenomenol improvement!
+
+1e) We again see the wonder Memoization creates together with recursion (Dynamic Programming!), We see this by contrasting the two implementations :
+
+The first using Memoization given around lines 10-24 : Which is able to calculate Fibonacci's terms upto 100000 in no time
+whereas the naive recursive Implementation given around lines 29-39 takes upto 10 minutes to calculate even the 40th Fibonacci Term.
+
+Here again, we demonstrate the wonders memoization could bring us, and with that we also realize a very basic result: The Functional Paradigm works better when clubbed with the
+other paradigms!
+
+Problem 2
+----------
+
+cross.py
+---------
+
+I've implemented the program to get the Cartesian Cross Product recursively, by dividing both the lists into half of their strength and
+then concatenating the lists of cross-products thus, obtained!
+
+This Divide and Conquer Strategy could be seen implemented around Line 16.
+
+The base case for the said recursion is when either of l1 or l2 has length 0 or when both of them have length 1(that's the only case that could be
+dealt with nicely!)  (Around Lines 9-12)
+
+reverse.py
+----------
+
+This program again relies on Binary Division and Merging!
+The key idea behind this was that the reverse of any list can be obtained by reversing both of its separately, and putting the second half, before the first.
+, which is what is done, in the recursive call in Line 12.
+
+The Base call, just deals with the case of length 1, where the reverse would be the same thing as the original.(Line 10)
+
+sub.py
+------
+
+The key observation to make was that if maintain two pointers and recursively progress these two, then we could solve this problem really easily.
+Suppose we find that the first element of both the lists are the same, then that means the truth of whether or not the first list is a sublist of the other
+would solely be decided by running the function on what remains after removing the first elements of the respective lists.
+
+This can be seen being done recursively in line 18-19.
+Also, If it so happens that the first element of the second list, doesn't match that of the first, then we could simpy look at the second element onwards in the second list.
+This can be done using the recursive call on Line 20-21.
+
+If suppose, by this procedure, we find that on a particular call the first list becomes empty then that indicates to the exhausation of all its entries, and that could be
+only if all of them have been found in the second list, and hence we terminate and return True.       (1st Base Case)
+
+And suppose, if instead the other list is terminated before the first, then that means there were certain elements in the first list, which weren't found in the second,
+and hence, The first wasn't a sublist of the second, and we should return False.                      (2nd Base Case)
+
+This is done around Lines 13-16.
+Also remark that because it may so happen that both the lists are empty simultaneouly, and in that case, we should return True, that's why we must check, the 1st base Case
+before the second.
+
+prems.py
+---------
+
+We make use of a subtle recursion
+
+All the permutations of a given list can be obtained by moving a particular element towards various positions, and keeping it in all those positions while permutating, rest of the positions.
+This is done in the nice and deep functional embedding on Line 15. The snippet:
+
+for x in prem(l[1:]) , permutates the list of all but the first element, and this first element is kept on position i-1, where
+i varies due to the snippet:
+for i in range(1,len(l)+1)
+
+And so, this recursively generates the list of all permutations there could be!
+
+We could easily verify that we get some 720 = 6! permutations for a list of lenght 6 (Exactly as expected!)

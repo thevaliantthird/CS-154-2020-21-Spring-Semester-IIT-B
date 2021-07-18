@@ -1,0 +1,60 @@
+It would be the first time, that I had to start the lab afresh again, perhaps because
+I was too ambitious and made a very comprehensive Program, and didn't understand certain aspects of
+FLTK that well
+
+Coming to the Program, I ideated the game to be such that there would be one an
+abstract Class Object which would either be a circle or rectangle on the screen
+and we could click on certain points on the screen and move this object opposite to
+our click, with the goal of moving it to a certain point of the screen.
+This is done by using the Function accelerate(defined ar Line 83, used in Line 207)
+
+I did it using the abstract class Object (line 42) defined as Rectangle and Elliptic
+around lines 104 and 138. I inherited from Fl_Window into the class GameController.
+This would enable me to implement the virtual (dynamically bound!) class handle
+so that I could get the co-ordinates of clicks anywhere on the window and act accordingly!
+
+The major challenge I faced, (which probably is the reason for the Fatal Error!),
+that prevented me from developing the game further was how to put into place
+a central loop, which would run the game. I would surely solve this problem in the
+Improvements section and get going!
+
+After I solved this, another fatal and completely senseless error surfaced, which
+was that the same implementation of the wipe() and refresh() that sir shared with us
+gave me Segmentation Fault! I tried debugging it for 2 hours and then gave up and
+start afresh!
+
+I consulted a few people about FLTK, and found that its internal Polymorphism is
+rather weak and doesn't work very well which leads to a cascade of errors.
+
+Therefore, the best option was to have as much similarities with Sir's original code
+as possible, so that's what I did.
+
+This time, I started to Built a game of Collect! which I once saw developed in
+a Minecraft like environment.
+There would be a black circle, the collecter and using it you have to go to various
+points marked on the screen and press Enter to collect that coin
+
+You'll be Navigating through the Arrow Keys of course!
+
+The Parent class of all Object (is defined about Line 278) is an abstract class with
+the abstract functions whose implementation could be found in Elliptic(class definition
+starting from Line 297) as well as in the class CollectorAndCollections(class definition
+starting from line 371), around the lines 314,321,403,410 .
+
+The Collectible Class defined around Line 337 is another Encapsulation of all the data
+we need about a Collectible (either a point-giving collectible or a bomb).
+
+But the main function whose handle runs the game is the second implementation of the
+abstract class Object i.e. CollectorAndCollections(line 371), This has functions for SONAR(),
+which called the function CheckInRadar() from Collectible and together found out of the
+coins within our radar and add them to the score, whenever Enter is pressed(catched by the
+virtual function handle() in CollectorAndCollections, defined around line 434.)
+
+A key Observation to draw from all this was the great utility of FLTK's abstract function
+virtual int handle(int e) from the Fl_Widget Class. This function is the only way to have
+an ever-running loop in an FLTK Program which on one hand clamps our wings but on the other
+hand is a great boon for non-concurrent systems.
+
+Lack of Concurrency requires us to have only one function which runs the main thing, and that's
+exactly what handle() does thereby demonstrating the great strength of Specialization
+and Inheritance! 
